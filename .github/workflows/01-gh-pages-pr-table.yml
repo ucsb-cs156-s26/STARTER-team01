@@ -13,7 +13,7 @@ on:
   push:
     branches:
       - main
-
+          
 
 permissions:
   contents: write
@@ -25,5 +25,6 @@ permissions:
 jobs:
   call-workflow-passing-data:
     uses: ucsb-cs156/workflows/.github/workflows/01-gh-pages-pr-table.yml@main
-    secrets:
-      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    secrets: 
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
+
