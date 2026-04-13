@@ -1,9 +1,7 @@
 package edu.ucsb.cs156.example.config;
 
 import java.security.KeyFactory;
-import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
-import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 import javax.crypto.Cipher;
@@ -21,16 +19,18 @@ public class EmailHealthIndicator implements HealthIndicator {
   private final PublicKey key;
   private String encrypted_emails;
 
-  public EmailHealthIndicator(@Value("${app.public_key}") String key, @Value("${app.admin.emails}") String adminEmails)
+  public EmailHealthIndicator(
+      @Value("${app.public_key}") String key, @Value("${app.admin.emails}") String adminEmails)
       throws Exception {
     X509EncodedKeySpec publicSpec = new X509EncodedKeySpec(Base64.getDecoder().decode(key));
     KeyFactory keyFactory = KeyFactory.getInstance("RSA");
     this.key = keyFactory.generatePublic(publicSpec);
-    try{
+    try {
       this.encrypted_emails = encrypt_emails(adminEmails);
-    }catch(IllegalBlockSizeException e){
-      log.error("Warning: List of admin emails is likely too long. If you are sure it is correct,"
-          + "please contact the course staff.");
+    } catch (IllegalBlockSizeException e) {
+      log.error(
+          "Warning: List of admin emails is likely too long. If you are sure it is correct,"
+              + "please contact the course staff.");
       this.encrypted_emails = null;
     }
   }
@@ -40,7 +40,7 @@ public class EmailHealthIndicator implements HealthIndicator {
     if (this.encrypted_emails == null) {
       return Health.down().build();
     }
-      return Health.up().withDetail("email", this.encrypted_emails).build();
+    return Health.up().withDetail("email", this.encrypted_emails).build();
   }
 
   private String encrypt_emails(String adminEmails) throws Exception {
